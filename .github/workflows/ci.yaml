@@ -1,0 +1,32 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version:  20.18.0
+        cache: 'npm'
+    - name: Install    
+    - run: npm ci
+    - name: Test
+      env:
+        BS_USER: ${{ secrets.BS_USER}}
+        BS_KEY: ${{ secrets.BS_KEY}}
+      run: npm run test
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+         name: logs
+         path: logs
+
